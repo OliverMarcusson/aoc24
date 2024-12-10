@@ -4,7 +4,7 @@ These are my solutions for AOC24, written in Rust!
 ### Progress:
 * Day 1 - ⭐⭐
 * Day 2 - ⭐
-* Day 3 - 
+* Day 3 - ⭐
 * Day 4 - 
 * Day 5 - 
 * Day 6 - 
