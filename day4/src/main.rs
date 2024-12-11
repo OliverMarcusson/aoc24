@@ -23,6 +23,7 @@ fn pattern(input: &Vec<String>, pat_type: &str, start_index: &str) -> String {
     let not_enough_space_h = input[i].len() - j >= 4;
     let not_enough_space_v = i <= input[0].len() - 4;
     let not_enough_space_h1 = j >= 3;
+    let xmas = i != 0 && i != input.len() - 1 && j != 0 && j != input[0].chars().count() - 1;
 
     match pat_type {
         "normal" => {
@@ -73,19 +74,61 @@ fn pattern(input: &Vec<String>, pat_type: &str, start_index: &str) -> String {
             return String::new();
         }
 
+        "xmas" => {
+            if xmas {
+                let mut output = String::new();
+                output += format!("{}.{},", i - 1, j - 1).as_str();
+                output += format!("{}.{},", i, j).as_str();
+                output += format!("{}.{}", i + 1, j + 1).as_str();
+                output += "|";
+                output += format!("{}.{},", i - 1, j + 1).as_str();
+                output += format!("{}.{},", i, j).as_str();
+                output += format!("{}.{}", i + 1, j - 1).as_str();
+                return output;
+            }
+            return String::new();
+        }
+
         _ => {
             return String::new();   
             }
     }
 }
 
-fn part_one() {
-    let input: Vec<String> = fs::read_to_string("src/input.txt")
+fn part_two() {
+    let mut input: Vec<String> = fs::read_to_string("src/input.txt")
         .expect("Failed to read input.")
         .split("\n")
         .map(|line| line.to_string())
-        .collect(); 
+        .collect();
+    input.pop();
+    let words = ["MAS", "SAM"];
+    let mut yes = 0;
 
+    for (i, row) in input.iter().enumerate() {
+        for (j, _) in row.chars().enumerate() {
+            let to_add: String = pattern(&input, "xmas", format!("{}.{}", i, j).as_str());
+            if to_add.as_str() != "" {
+                let mut to_add: Vec<String> = to_add.split("|").map(|coord| coord.to_string()).collect();
+                to_add[0] = get_string(&input, to_add[0].as_str());
+                to_add[1] = get_string(&input, to_add[1].as_str());
+                if words.contains(&to_add[0].as_str()) && words.contains(&to_add[1].as_str()) {
+                    yes += 1;
+                }
+            }
+        }
+    }
+    println!("Part 2 Appearances: {yes}");
+}
+
+fn part_one() {
+    let mut input: Vec<String> = fs::read_to_string("src/input.txt")
+        .expect("Failed to read input.")
+        .split("\n")
+        .map(|line| line.to_string())
+        .collect();
+    
+    input.pop();
     let words = ["XMAS", "SAMX"];
     let patterns = ["normal", "vertical", "diagr", "diagl"];
 
@@ -107,9 +150,10 @@ fn part_one() {
             }
         }
     }
-    println!("Appearances: {yes}");
+    println!("Part 1 Appearances: {yes}");
 }
 
 fn main() {
     part_one();
+    part_two();
 }
